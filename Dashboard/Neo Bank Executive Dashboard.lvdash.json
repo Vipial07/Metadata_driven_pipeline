@@ -1,0 +1,778 @@
+{
+  "datasets": [
+    {
+      "name": "27ab0f31",
+      "displayName": "Total_customer",
+      "config": {
+        "version": "1.1",
+        "source": "select count(1) from banking.gold.customer_360",
+        "dimensions": [
+          {
+            "expr": "source.*"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          }
+        ]
+      }
+    },
+    {
+      "name": "0b840378",
+      "displayName": "total_deposite",
+      "queryLines": [
+        "select round(sum(total_balance),2) as total_deposite from banking.gold.customer_360;"
+      ]
+    },
+    {
+      "name": "08c43c19",
+      "displayName": "total_transaction",
+      "queryLines": [
+        "select round(sum(total_transaction_amount),2) as total_transaction from banking.gold.customer_360 ;"
+      ]
+    },
+    {
+      "name": "55bd005d",
+      "displayName": "High Risk Customer",
+      "queryLines": [
+        "select count(*) from banking.gold.customer_360 where risk_grade = 'HIGH'"
+      ]
+    },
+    {
+      "name": "17621b6c",
+      "displayName": "transaction_channel_summary",
+      "queryLines": [
+        "select * from banking.gold.transaction_channnel_summary;"
+      ]
+    },
+    {
+      "name": "e6ba6045",
+      "displayName": "based_on_customer_segment",
+      "queryLines": [
+        "select customer_segment,count(*) as count from banking.gold.customer_360 group by customer_segment;"
+      ]
+    },
+    {
+      "name": "717d47ab",
+      "displayName": "based_on_risk_grade",
+      "queryLines": [
+        "select risk_grade,count(*) from banking.gold.customer_360 where risk_grade is not null group by risk_grade;\r\n",
+        "\r\n",
+        "\r\n",
+        "-- select * from banking.bronze.credit_bureau_reports;-- where risk_grade is not null"
+      ]
+    },
+    {
+      "name": "774e2d64",
+      "displayName": "top_customer",
+      "queryLines": [
+        "select customer_name, round(total_balance) as total_balance,branch_name,risk_grade from banking.gold.customer_360 order by total_balance desc limit 10; "
+      ]
+    },
+    {
+      "name": "7ef95c93",
+      "displayName": "Customer_by_branch",
+      "queryLines": [
+        "select branch_performace.branch_name,total_customers from banking.gold.branch_performace;\n"
+      ]
+    },
+    {
+      "name": "085c36a3",
+      "displayName": "branch_wise_total_deposite",
+      "queryLines": [
+        "select branch_code,round(total_deposits) as total_deposits  from banking.gold.branch_performace;"
+      ],
+      "catalog": "banking",
+      "schema": "gold"
+    },
+    {
+      "name": "f6db1e9f",
+      "displayName": "top_5_business_date",
+      "queryLines": [
+        "SELECT\r\n",
+        "    txn_date,\r\n",
+        "    ROUND(SUM(total_transaction_amount)) AS total_transaction_amount\r\n",
+        "FROM banking.gold.daily_bank_kpi\r\n",
+        "GROUP BY txn_date\r\n",
+        "ORDER BY total_transaction_amount desc\r\n",
+        "LIMIT 5;"
+      ],
+      "catalog": "banking",
+      "schema": "gold"
+    },
+    {
+      "name": "107f93e7",
+      "displayName": "transaction_summary",
+      "queryLines": [
+        "SELECT\r\n",
+        "    txn_date,\r\n",
+        "    ROUND(SUM(total_transaction_amount)) AS total_transaction_amount\r\n",
+        "FROM banking.gold.daily_bank_kpi\r\n",
+        "GROUP BY txn_date;"
+      ],
+      "catalog": "banking",
+      "schema": "gold"
+    }
+  ],
+  "pages": [
+    {
+      "name": "0438da7e",
+      "displayName": "EXECUTIVE DASHBOARD",
+      "layout": [
+        {
+          "widget": {
+            "name": "to",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "27ab0f31",
+                  "fields": [
+                    {
+                      "name": "sum(count(1))",
+                      "expression": "SUM(`count(1)`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Total Active Customers"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(count(1))"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "t1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "0b840378",
+                  "fields": [
+                    {
+                      "name": "sum(total_deposite)",
+                      "expression": "SUM(`total_deposite`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showDescription": false,
+                "showTitle": true,
+                "title": "Total Deposits"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(total_deposite)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "total-te",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "08c43c19",
+                  "fields": [
+                    {
+                      "name": "sum(total_transaction)",
+                      "expression": "SUM(`total_transaction`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Total Transactions"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(total_transaction)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "h",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "55bd005d",
+                  "fields": [
+                    {
+                      "name": "sum(count(1))",
+                      "expression": "SUM(`count(1)`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "High Risk Customers"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(count(1))"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "p",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "17621b6c",
+                  "fields": [
+                    {
+                      "name": "CHANNEL",
+                      "expression": "`CHANNEL`"
+                    },
+                    {
+                      "name": "sum(total_transaction)",
+                      "expression": "SUM(`total_transaction`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Payment Method Summary"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "CHANNEL",
+                  "displayName": "Payment Method",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_transaction)",
+                  "displayName": "Total Transaction",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "label": {
+                  "show": false
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 6,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "customer",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e6ba6045",
+                  "fields": [
+                    {
+                      "name": "customer_segment",
+                      "expression": "`customer_segment`"
+                    },
+                    {
+                      "name": "sum(count)",
+                      "expression": "SUM(`count`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Customer Segment Analysis"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "customer_segment",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(count)",
+                  "displayName": "Count",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 2,
+            "width": 6,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "r",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "717d47ab",
+                  "fields": [
+                    {
+                      "name": "sum(count(1))",
+                      "expression": "SUM(`count(1)`)"
+                    },
+                    {
+                      "name": "risk_grade",
+                      "expression": "`risk_grade`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Risk based Distribution"
+              },
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "sum(count(1))",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Sum of Customers"
+                },
+                "color": {
+                  "fieldName": "risk_grade",
+                  "displayName": "Risk Grade",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "42558dab",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "774e2d64",
+                  "fields": [
+                    {
+                      "name": "customer_name",
+                      "expression": "`customer_name`"
+                    },
+                    {
+                      "name": "total_balance",
+                      "expression": "`total_balance`"
+                    },
+                    {
+                      "name": "branch_name",
+                      "expression": "`branch_name`"
+                    },
+                    {
+                      "name": "risk_grade",
+                      "expression": "`risk_grade`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "customer_name"
+                  },
+                  {
+                    "fieldName": "total_balance"
+                  },
+                  {
+                    "fieldName": "branch_name"
+                  },
+                  {
+                    "fieldName": "risk_grade"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 5,
+            "y": 6,
+            "width": 7,
+            "height": 5
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "44586fa0",
+      "displayName": "BRANCH_HEAD",
+      "layout": [
+        {
+          "widget": {
+            "name": "branch-wise",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "7ef95c93",
+                  "fields": [
+                    {
+                      "name": "sum(total_customers)",
+                      "expression": "SUM(`total_customers`)"
+                    },
+                    {
+                      "name": "branch_name",
+                      "expression": "`branch_name`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Branch wise customer"
+              },
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "sum(total_customers)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Total Customer"
+                },
+                "color": {
+                  "fieldName": "branch_name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 0,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "brunc",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "085c36a3",
+                  "fields": [
+                    {
+                      "name": "branch_code",
+                      "expression": "`branch_code`"
+                    },
+                    {
+                      "name": "sum(total_deposits)",
+                      "expression": "SUM(`total_deposits`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Branch wise Deposite"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "branch_code",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_deposits)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "t1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f6db1e9f",
+                  "fields": [
+                    {
+                      "name": "monthly(txn_date)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `txn_date`)"
+                    },
+                    {
+                      "name": "sum(total_transaction_amount)",
+                      "expression": "SUM(`total_transaction_amount`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Top 5 business date"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(txn_date)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_transaction_amount)",
+                  "displayName": "Total Transaction",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "transaction-summa",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "107f93e7",
+                  "fields": [
+                    {
+                      "name": "monthly(txn_date)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `txn_date`)"
+                    },
+                    {
+                      "name": "sum(total_transaction_amount)",
+                      "expression": "SUM(`total_transaction_amount`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Transaction summary"
+              },
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(txn_date)",
+                  "displayName": "Month",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_transaction_amount)",
+                  "displayName": "Total Transaction Amount",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 5,
+            "width": 6,
+            "height": 5
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  },
+  "bookmarks": [
+    {
+      "name": "549aee45",
+      "displayName": "Unnamed bookmark"
+    }
+  ]
+}
