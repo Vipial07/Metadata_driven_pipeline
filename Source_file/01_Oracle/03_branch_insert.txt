@@ -1,0 +1,6 @@
+/* 1. BRANCHES */
+INSERT INTO banking.branches (branch_code, branch_name, city, state, region) VALUES 
+('BR001', 'Mumbai Main', 'Mumbai', 'Maharashtra', 'West'),
+('BR002', 'Delhi Central', 'Delhi', 'Delhi', 'North'),
+('BR003', 'Bangalore Tech Park', 'Bangalore', 'Karnataka', 'South'),
+('BR004', 'Ahmedabad Corporate', 'Ahmedabad', 'Gujarat', 'West');

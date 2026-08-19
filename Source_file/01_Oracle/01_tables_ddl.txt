@@ -1,0 +1,96 @@
+/* =========================================
+   TABLE: branches
+========================================= */
+
+CREATE TABLE branches (
+    branch_code    VARCHAR2(10)    NOT NULL,
+    branch_name    VARCHAR2(100)   NOT NULL,
+    city           VARCHAR2(100)   NOT NULL,
+    state          VARCHAR2(100)   NOT NULL,
+    region         VARCHAR2(100),
+    created_at     TIMESTAMP DEFAULT SYSTIMESTAMP,
+
+    CONSTRAINT pk_branches
+        PRIMARY KEY (branch_code)
+);
+
+/* =========================================
+   TABLE: customers
+========================================= */
+
+CREATE TABLE customers (
+    customer_id      NUMBER(10)      NOT NULL,
+    first_name       VARCHAR2(100)   NOT NULL,
+    last_name        VARCHAR2(100)   NOT NULL,
+    date_of_birth    DATE            NOT NULL,
+    pan_number       VARCHAR2(20),
+    email            VARCHAR2(150),
+    phone_number     VARCHAR2(20),
+    kyc_status       VARCHAR2(50) DEFAULT 'PENDING',
+    branch_code      VARCHAR2(10)    NOT NULL,
+    created_at       TIMESTAMP DEFAULT SYSTIMESTAMP,
+    updated_at       TIMESTAMP DEFAULT SYSTIMESTAMP,
+
+    CONSTRAINT pk_customers
+        PRIMARY KEY (customer_id),
+
+    CONSTRAINT fk_customers_branches
+        FOREIGN KEY (branch_code)
+        REFERENCES branches(branch_code)
+);
+
+alter table accounts modify date_of_birth  varchar2(50);
+
+/* =========================================
+   TABLE: accounts
+========================================= */
+
+CREATE TABLE accounts (
+    account_id       NUMBER(19)      NOT NULL,
+    customer_id      NUMBER(10)      NOT NULL,
+    account_type     VARCHAR2(50)    NOT NULL,
+    balance          NUMBER(18,2)    NOT NULL,
+    currency         VARCHAR2(10) DEFAULT 'INR',
+    branch_code      VARCHAR2(10)    NOT NULL,
+    status           VARCHAR2(50) DEFAULT 'ACTIVE',
+    opened_date      DATE            NOT NULL,
+    created_at       TIMESTAMP DEFAULT SYSTIMESTAMP,
+    updated_at       TIMESTAMP DEFAULT SYSTIMESTAMP,
+
+    CONSTRAINT pk_accounts
+        PRIMARY KEY (account_id),
+
+    CONSTRAINT fk_accounts_customers
+        FOREIGN KEY (customer_id)
+        REFERENCES customers(customer_id),
+
+    CONSTRAINT fk_accounts_branches
+        FOREIGN KEY (branch_code)
+        REFERENCES branches(branch_code)
+);
+
+alter table accounts modify OPENED_DATE  varchar2(50);
+
+/* =========================================
+   TABLE: transactions
+========================================= */
+
+CREATE TABLE transactions (
+    txn_id            NUMBER(19)      NOT NULL,
+    account_id        NUMBER(19)      NOT NULL,
+    txn_type          VARCHAR2(20)    NOT NULL,
+    amount            NUMBER(18,2)    NOT NULL,
+    txn_timestamp     TIMESTAMP       NOT NULL,
+    channel           VARCHAR2(50),
+    status            VARCHAR2(50) DEFAULT 'SUCCESS',
+    created_at        TIMESTAMP DEFAULT SYSTIMESTAMP,
+
+    CONSTRAINT pk_transactions
+        PRIMARY KEY (txn_id),
+
+    CONSTRAINT fk_transactions_accounts
+        FOREIGN KEY (account_id)
+        REFERENCES accounts(account_id)
+);
+
+alter table transactions modify txn_timestamp  varchar2(100);
